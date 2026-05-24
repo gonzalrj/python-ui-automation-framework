@@ -11,9 +11,9 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "anthropic.claude-code",
         "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.pytest"
+        "ms-python.vscode-pylance"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/usr/local/py-utils/venvs/pytest/bin/python"
