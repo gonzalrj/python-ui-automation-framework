@@ -1,0 +1,2 @@
+-r common.txt
+selenium==4.15.2

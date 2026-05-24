@@ -1,0 +1,23 @@
+{
+  "name": "Python UI Automation",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "remoteUser": "root",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.pytest"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/py-utils/venvs/pytest/bin/python"
+      }
+    }
+  }
+}

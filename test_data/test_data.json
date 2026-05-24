@@ -1,0 +1,20 @@
+{
+  "users": {
+    "valid_user": {
+      "username": "standard_user",
+      "password": "secret_sauce"
+    },
+    "invalid_user": {
+      "username": "invalid_user",
+      "password": "wrong_password"
+    },
+    "locked_user": {
+      "username": "locked_out_user",
+      "password": "secret_sauce"
+    }
+  },
+  "test_data": {
+    "timeout": 10,
+    "wait_time": 5
+  }
+}
