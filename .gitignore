@@ -37,3 +37,6 @@ allure-report/
 
 # OS
 .DS_Store
+
+# HTML Reports
+reports/
