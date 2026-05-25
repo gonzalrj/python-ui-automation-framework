@@ -12,6 +12,10 @@ on:
           - both
           - selenium
           - playwright
+      base_url:
+        description: "Base URL for tests (leave blank to use default: https://www.saucedemo.com/)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -29,50 +33,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Run tests in devcontainer
+        uses: devcontainers/ci@v0.3
         with:
-          python-version: "3.11"
-          cache: pip
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            chromium-browser chromium-chromedriver \
-            libnss3 libgbm1 libatk-bridge2.0-0 libgtk-3-0 libasound2 \
-            default-jre-headless nodejs npm
-          # Symlink to paths expected by conftest.py
-          [ -f /usr/bin/chromium ] || sudo ln -s /usr/bin/chromium-browser /usr/bin/chromium
-          [ -f /usr/bin/chromedriver ] || \
-            sudo ln -s "$(find /usr -name chromedriver 2>/dev/null | head -1)" /usr/bin/chromedriver
-
-      - name: Install Allure CLI
-        run: npm install -g allure-commandline
-
-      - name: Install Python dependencies
-        run: |
-          pip install -r requirements/common.txt
-          if [[ "${{ inputs.framework }}" == "selenium" || "${{ inputs.framework }}" == "both" ]]; then
-            pip install -r requirements/selenium.txt
-          fi
-          if [[ "${{ inputs.framework }}" == "playwright" || "${{ inputs.framework }}" == "both" ]]; then
-            pip install -r requirements/playwright.txt
-            playwright install chromium
-          fi
-
-      - name: Run tests
-        continue-on-error: true
-        run: |
-          case "${{ inputs.framework }}" in
-            selenium)   TEST_PATH="tests/selenium" ;;
-            playwright) TEST_PATH="tests/playwright" ;;
-            *)          TEST_PATH="tests" ;;
-          esac
-          pytest "$TEST_PATH" --alluredir=allure-results || echo "Some tests failed"
-
-      - name: Generate Allure report
-        run: allure generate allure-results --clean -o allure-report
+          runCmd: |
+            PYTEST_ARGS="tests --alluredir=allure-results"
+            if [[ "${{ inputs.framework }}" != "both" ]]; then
+              PYTEST_ARGS="$PYTEST_ARGS -k ${{ inputs.framework }}"
+            fi
+            if [[ -n "${{ inputs.base_url }}" ]]; then
+              PYTEST_ARGS="$PYTEST_ARGS --base-url=${{ inputs.base_url }}"
+            fi
+            pytest $PYTEST_ARGS || true
+            allure generate allure-results --clean -o allure-report
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
